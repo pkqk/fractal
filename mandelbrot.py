@@ -22,7 +22,7 @@ class Mandelbrot(object):
         c = z
         for i in range(iterations):
             z = z ** 2 + c
-            mag = z.real ** 2 + z.imag ** 2
+            mag = z.real * z.real + z.imag * z.imag
             if mag >= 4:
                 p = 255 - int(255 * (math.log(i + 1) /
                     math.log(iterations)))
