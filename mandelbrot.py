@@ -16,10 +16,32 @@ class Mandelbrot(object):
             z = z ** 2 + c
             mag = z.real * z.real + z.imag * z.imag
             if mag >= 4:
-                p = 255 - int(255 * (math.log(i + 1) /
-                    math.log(iterations)))
-                return (p, p, p)
+                return self.hsv(i, iterations)
         return (0, 0, 0)
+
+    def greyscale(self, iteration, iterations):
+        p = 255 - int(255 * (math.log(iteration + 1) /
+            math.log(iterations)))
+        return (p, p, p)
+
+    def hsv(self, iteration, iterations):
+        h = (1 - (math.log(iteration+1) / math.log(iterations))) * 6
+        c = 0.5
+        x = c * (1 - abs(h % 2 - 1))
+        m = 0.3
+        if 0 <= h < 1:
+            rgb = (c, x, 0)
+        elif 1 <= h < 2:
+            rgb = (x, c, 0)
+        elif 2 <= h < 3:
+            rgb = (0, c, x)
+        elif 3 <= h < 4:
+            rgb = (0, x, c)
+        elif 4 <= h < 5:
+            rgb = (x, 0, c)
+        else:
+            rgb = (c, 0, x)
+        return tuple(int(256 * (m+p)) for p in rgb)
 
     def draw_to(self, image):
         width, height = image.size
