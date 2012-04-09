@@ -9,14 +9,6 @@ class Mandelbrot(object):
         self.start = (left, top)
         self.end = (right, bottom)
 
-    def map(self, width, height, x, y):
-        left, top = self.start
-        right, bottom = self.end
-        return complex(
-            left + (right - left) * ((x + 0.5) / width),
-            top - (top - bottom) * ((y + 0.5) / height)
-        )
-
     def iterate(self, z):
         iterations = 1000
         c = z
@@ -31,9 +23,14 @@ class Mandelbrot(object):
 
     def draw_to(self, image):
         width, height = image.size
+        left, top = self.start
+        right, bottom = self.end
         for x in range(width):
             for y in range(height):
-                zc = self.map(width, height, x, y)
+                zc = complex(
+                    left + (right - left) * ((x + 0.5) / width),
+                    top - (top - bottom) * ((y + 0.5) / height)
+                )
                 colour = self.iterate(zc)
                 image.putpixel((x, y), colour)
 
