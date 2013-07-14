@@ -11,27 +11,36 @@ LOG2 = math.log(2)
 
 
 class Mandelbrot(object):
-    def __init__(self, (left, top), (right, bottom)):
-        self.start = (left, top)
-        self.end = (right, bottom)
+    def __init__(self, left_top, right_bottom, iterations=30):
+        self.start = left_top
+        self.end = right_bottom
+        self.iterations = iterations
 
-    def iterate(self, z):
-        iterations = 1000
+    def in_cardoid_or_p2(self, z):
+        q = (z.real - 1/4)**2 + z.imag**2
+        if q * (q + ( z.real - 1/4)) < (y**2/4):
+            return True
+        return (z.real + 1)**2 + z.imag**2 < 1/16
+
+    def iterate(self, z, colour_func):
         c = z
-        for i in range(iterations):
-            z = z ** 2 + c
+        if self.in_cardoid_or_p2(z):
+            return (0, 0, 0)
+        for i in range(self.iterations):
+            z = (z * z) + c
             mag = z.real * z.real + z.imag * z.imag
+
             if mag >= 4:
-                return self.hsv(i, iterations)
+                return colour_func(i, self.iterations, math.sqrt(mag))
         return (0, 0, 0)
 
-    def greyscale(self, iteration, iterations):
+    def greyscale(self, iteration, iterations, point):
         p = 255 - int(255 * (math.log(iteration + 1) /
             math.log(iterations)))
         return (p, p, p)
 
-    def hsv(self, iteration, iterations):
-        h = (1 - (math.log(iteration+1) / math.log(iterations))) * 6
+    def hsv(self, iteration, iterations, abs_point):
+        h = 3*(iteration - math.log(math.log(abs_point))/LOG2)/iterations
         c = 0.5
         x = c * (1 - abs(h % 2 - 1))
         m = 0.3
@@ -59,7 +68,7 @@ class Mandelbrot(object):
                     left + (right - left) * ((x + 0.5) / width),
                     top - (top - bottom) * ((y + 0.5) / height)
                 )
-                colour = self.iterate(zc)
+                colour = self.iterate(zc, self.hsv)
                 image.putpixel((x, y), colour)
 
 
