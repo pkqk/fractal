@@ -1,4 +1,9 @@
 from __future__ import print_function, unicode_literals, division
+try:
+    range = xrange
+except NameError:
+    pass
+
 
 from PIL import Image, PngImagePlugin
 import sys
