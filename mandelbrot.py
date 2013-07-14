@@ -44,6 +44,18 @@ class Mandelbrot(object):
             math.log(iterations)))
         return (p, p, p)
 
+    def black_and_white(self, iteration, iterations, point):
+        p = int(255 * (1 - (iteration/iterations) ** 1.1))
+        return (p, p, p)
+
+    def piecemeal(self, iteration, iterations, point):
+        if iteration < 15:
+            return (255, 255, 255)
+        p = 255 - int(255 * (math.log(iteration - 14) /
+            math.log(iterations)))
+        return (p, p, p)
+
+
     def hsv(self, iteration, iterations, abs_point):
         h = 3*(iteration - math.log(math.log(abs_point))/LOG2)/iterations
         c = 0.5
