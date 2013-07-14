@@ -1,7 +1,13 @@
 from __future__ import print_function, unicode_literals, division
-from PIL import Image
+
+from PIL import Image, PngImagePlugin
 import sys
 import math
+import random
+from timeit import timeit
+
+
+LOG2 = math.log(2)
 
 
 class Mandelbrot(object):
@@ -58,8 +64,16 @@ class Mandelbrot(object):
 
 
 if __name__ == "__main__":
-    m = Mandelbrot((-2.5, 1.5), (1.5, -1.5))
-    im = Image.new('RGB', (1024, 768))
-    m.draw_to(im)
-    if len(sys.argv) > 1:
-        im.save(open(sys.argv[1], 'w'), 'PNG')
+    x, y, span = -1.3, 0.15, 0.4
+    print(x,y,span)
+    def gen():
+        tl = (x - span, y + span)
+        br = (x + span, y - span)
+        m = Mandelbrot(tl, br, 40)
+        im = Image.new('RGB', (200, 200))
+        m.draw_to(im)
+        if len(sys.argv) > 1:
+            meta = PngImagePlugin.PngInfo()
+            meta.add_text('mandelbrot', "top-left %s bottom-right %s iterations %s" % (tl, br, m.iterations), 0)
+            im.save(open(sys.argv[1], 'w'), 'PNG', pnginfo=meta)
+    print("time", timeit(gen, number=1))
