@@ -56,8 +56,15 @@ class Mandelbrot(object):
         return (p, p, p)
 
 
-    def hsv(self, iteration, iterations, abs_point):
+    def hsv(self, iteration, iterations, abs_point, rot=0):
+        h = (1 - (math.log(iteration+1) / math.log(iterations))) * 6
+        #n + 1 - math.log(math.log(zn.abs()))/math.log(2)
         h = 3*(iteration - math.log(math.log(abs_point))/LOG2)/iterations
+        #if h + rot > 6:
+        #    h = (h - 6) + rot
+        #else:
+        #    h = h + rot
+        #h = 2 + (1 - (iteration/iterations) ** 1.1) * 2 
         c = 0.5
         x = c * (1 - abs(h % 2 - 1))
         m = 0.3
@@ -90,8 +97,14 @@ class Mandelbrot(object):
 
 
 if __name__ == "__main__":
-    x, y, span = -1.3, 0.15, 0.4
-    print(x,y,span)
+    #m = Mandelbrot((-2.5, 1.5), (1.5, -1.5))
+    #x, y = random.uniform(-2,1.5), random.uniform(-1.5, 1.5)
+    #span = random.uniform(0, 1.5)
+    #x, y, span = -1.58372105617, 0.21909869034, 0.261481489798
+    x, y, span = -1.21, 0.28, 0.25
+    #x, y, span = -1.3, 0.15, 0.4
+    #x, y, span = -1.2, 0.35, 0.2
+    #print(x,y,span)
     def gen():
         tl = (x - span, y + span)
         br = (x + span, y - span)
