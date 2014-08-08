@@ -20,6 +20,7 @@ class Mandelbrot(object):
         self.start = left_top
         self.end = right_bottom
         self.iterations = iterations
+        self.rot = 0
 
     def in_cardoid_or_p2(self, z):
         q = (z.real - 1/4)**2 + z.imag**2
@@ -56,16 +57,16 @@ class Mandelbrot(object):
         return (p, p, p)
 
 
-    def hsv(self, iteration, iterations, abs_point, rot=0):
+    def hsv(self, iteration, iterations, abs_point):
         h = (1 - (math.log(iteration+1) / math.log(iterations))) * 6
         #n + 1 - math.log(math.log(zn.abs()))/math.log(2)
         h = 3*(iteration - math.log(math.log(abs_point))/LOG2)/iterations
-        #if h + rot > 6:
-        #    h = (h - 6) + rot
-        #else:
-        #    h = h + rot
+        if h + self.rot > 6:
+            h = (h - 6) + self.rot
+        else:
+            h = h + self.rot
         #h = 2 + (1 - (iteration/iterations) ** 1.1) * 2 
-        c = 0.5
+        c = 0.6
         x = c * (1 - abs(h % 2 - 1))
         m = 0.3
         if 0 <= h < 1:
@@ -109,10 +110,11 @@ if __name__ == "__main__":
         tl = (x - span, y + span)
         br = (x + span, y - span)
         m = Mandelbrot(tl, br, 40)
-        im = Image.new('RGB', (200, 200))
+        im = Image.new('RGB', (600, 600))
+        rot = m.rot = float(sys.argv[2])
         m.draw_to(im)
         if len(sys.argv) > 1:
             meta = PngImagePlugin.PngInfo()
             meta.add_text('mandelbrot', "top-left %s bottom-right %s iterations %s" % (tl, br, m.iterations), 0)
-            im.save(open(sys.argv[1], 'w'), 'PNG', pnginfo=meta)
+            im.save(open(sys.argv[1] % rot, 'w'), 'PNG', pnginfo=meta)
     print("time", timeit(gen, number=1))
